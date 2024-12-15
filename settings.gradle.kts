@@ -26,7 +26,7 @@ rootProject.name = "FrozenBlock Multiloader Template"
 localRepository("FrozenLib-Multiloader", true, true, true)
 
 // TODO: [Treetrain1] make this support ML FLib modules. This cannot detect sub-projects/modules for some reason.
-fun localRepository(repo: String, kotlin: Boolean, enabled: Boolean, multiloader: Boolean = false) {
+fun localRepository(repo: String, kotlin: Boolean, enabled: Boolean, multiloader: Boolean = false, module: String = "") {
     if (!enabled) {
         println("Not including local repo $repo as it is disabled")
         return
@@ -44,10 +44,10 @@ fun localRepository(repo: String, kotlin: Boolean, enabled: Boolean, multiloader
 
     val isIDE = androidInjectedInvokedFromIde != "" || (System.getenv(xpcServiceName) ?: "").contains("intellij") || (System.getenv(xpcServiceName) ?: "").contains(".idea") || System.getenv(ideaInitialDirectory) != null
 
-    var path = "../$repo"
+    var path = "../$repo" + if (module.isEmpty()) "" else "/$module"
     var file = File(path)
 
-    val prefixedRepoName = ":$repo"
+    val prefixedRepoName = ":$repo" + if (module.isEmpty()) "" else ":$module"
 
     if (allowLocalRepoUse && (isIDE || allowLocalRepoInConsoleMode)) {
         if (github) {
@@ -67,8 +67,8 @@ fun localRepository(repo: String, kotlin: Boolean, enabled: Boolean, multiloader
 
     // TODO: [Treetrain1] make this support ML FLib modules. This cannot detect sub-projects/modules for some reason.
     if (multiloader) {
-        localRepository("$repo:common", kotlin, true, false)
-        localRepository("$repo:fabric", kotlin, true, false)
-        localRepository("$repo:neoforge", kotlin, true, false)
+        localRepository(repo, kotlin, true, false, "common")
+        localRepository(repo, kotlin, true, false, "fabric")
+        localRepository(repo, kotlin, true, false, "neoforge")
     }
 }
